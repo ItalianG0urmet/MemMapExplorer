@@ -1,1 +1,13 @@
-build
+build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+dumper
+*.o
+*.so
+*.a
+
+*.autosave
+*.swp

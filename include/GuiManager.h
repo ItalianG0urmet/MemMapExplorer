@@ -1,24 +1,30 @@
-#ifndef GUIMANAGER_H
-#define GUIMANAGER_H
+#pragma once
+#include <vector>
 #include <string>
-#include <unordered_map>
-
+#include <ncurses.h>
 
 class GuiManager {
 public:
-    GuiManager(int *currentLine, int *maxLine, std::unordered_map<int, std::string> *strings);
-    std::unordered_map<int, std::string> *strings;
+    GuiManager(int* currentLine, int* maxLine, std::vector<std::string>* strings);
     void run() const;
+    static void initColors();
+
 private:
-    static void printLineNumber(int number);
-    std::string getPathByLine(int line) const;
-    static void printCurrentLineNumber(int number);
     void createBox() const;
     void loadLines() const;
-    int *currentLine;
-    int *maxLine;
+    void drawHeader() const;
+    void drawFooter() const;
+    void handleResize() const;
+
+    std::vector<std::string>* strings;
+    int* currentLine;
+    int* maxLine;
+
+    enum ColorTheme {
+        FRAME = 1,
+        HEADER,
+        HIGHLIGHT,
+        LINE_NUMBER,
+        DEFAULT_TEXT
+    };
 };
-
-
-
-#endif //GUIMANAGER_H

@@ -1,9 +1,6 @@
-#ifndef PROCESSMANAGER_H
-#define PROCESSMANAGER_H
-
+#pragma once
+#include <vector>
 #include <string>
-#include <unordered_map>
 
-bool fileManager(const std::string& path, const std::string& findOnly, std::unordered_map<int, std::string> *strings);
-
-#endif //PROCESSMANAGER_H
+bool fileManager(const std::string& path, const std::string& findOnly, std::vector<std::string>* strings);
+bool lineFormatter(const std::string& line, const std::string& findOnly, std::string* outPath);

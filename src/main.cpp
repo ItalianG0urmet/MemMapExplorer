@@ -1,76 +1,66 @@
 #include <iostream>
 #include <csignal>
 #include <thread>
-#include <unordered_map>
-
+#include <vector>
 #include "../include/ProcessManager.h"
 #include "../include/GuiManager.h"
-
-void loadArgs (int argc, char *argv[]);
-bool pidExistVerify(int pid);
-bool validatePid(std::unordered_map<int, std::string> *strings);
+#include "../include/globals.h" 
 
 std::string onlyFindString;
 std::string pid;
 
-int main(const int argc, char *argv[]) {
+void loadArgs(int argc, char* argv[]);
+bool pidExistVerify(int pid);
+bool validatePid(std::vector<std::string>* strings);
 
-    std::unordered_map<int, std::string> extractedPath;
+int main(int argc, char* argv[]) {
+    std::vector<std::string> extractedPath;
     int currentLine = 1;
-    int maxLineLength;
+    int maxLineLength = 20;
 
     loadArgs(argc, argv);
-    if (!validatePid(&extractedPath))
-        return EXIT_FAILURE;
+    if (!validatePid(&extractedPath)) return EXIT_FAILURE;
 
-    GuiManager guiManager(&currentLine, &maxLineLength, &extractedPath);
-    std::thread guiThread(&GuiManager::run, &guiManager);
+    GuiManager gui(&currentLine, &maxLineLength, &extractedPath);
+    std::thread guiThread(&GuiManager::run, &gui);
     guiThread.join();
 
     return EXIT_SUCCESS;
 }
 
-bool pidExistVerify(const int pid) { return (kill(pid, 0) != 0);}
+bool pidExistVerify(int pid) {
+    return kill(pid, 0) != 0;
+}
 
-bool validatePid(std::unordered_map<int, std::string> *strings) {
-
-    std::string mapPath = "/proc/";
+bool validatePid(std::vector<std::string>* strings) {
+    std::string mapPath = "/proc/" + pid + "/maps";
     try {
-
-        if (pid.empty()) {
-            std::cerr << "You must provide a process ID" << std::endl;
-            return false;
-        }
-
+        if (pid.empty()) throw std::invalid_argument("No PID provided");
         int pidVal = std::stoi(pid);
         if (pidExistVerify(pidVal)) {
-            std::cerr << "Invalid pid: " << pidVal << std::endl;
+            std::cerr << "Invalid PID: " << pidVal << std::endl;
             return false;
         }
-
-        mapPath.append(pid + "/maps");
-        if (!fileManager(mapPath, onlyFindString, strings)) {
-            return false;
-        }
-    } catch (const std::invalid_argument &e) {
-        std::cerr << "Invalid PID format" << std::endl;
+        return fileManager(mapPath, onlyFindString, strings);
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
         return false;
     }
-    return true;
 }
 
-void loadArgs (const int argc, char *argv[]) {
+void loadArgs(int argc, char* argv[]) {
     int opt;
-    while ((opt = getopt(argc, argv, "p:")) != -1) {
+    while ((opt = getopt(argc, argv, "p:f:")) != -1) {
         switch (opt) {
-            case 'p':
-                pid = optarg;
-            break;
-            case '?':
-                default:
-                    std::cerr << "Use: " << argv[0] << " -p <PID> [-f <arg>]\n";
-            exit(EXIT_FAILURE);
+            case 'p': pid = optarg; break;
+            case 'f': onlyFindString = optarg; break;
+            default:
+                std::cerr << "Usage: " << argv[0] << " -p <PID> [-f <filter>]\n";
+                exit(EXIT_FAILURE);
         }
     }
+    if (pid.empty()) {
+        std::cerr << "Missing -p option\n";
+        exit(EXIT_FAILURE);
+    }
 }
-
