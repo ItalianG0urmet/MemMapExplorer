@@ -10,17 +10,12 @@
 
 To use the application, you will need to know the PID of the program you wish to dump. Once you have the PID, you can run the following command: 
 ```bash
-$ ./dumper -p <pid>
+$ ./dumper -p <pid> -f <input>
 ```
 
 ### 🖼️ Screenshot
 
 ![Screenshot](screenshot.png)
-
-## 🗒️ Planned Features
-
-- **Find string**: Identify a defined string in the process dump.  
-- **Deleted Files View**: Display only files that are no longer present in the filesystem.  
 
 ## 🤝 Support
 
