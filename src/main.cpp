@@ -10,6 +10,7 @@ std::string onlyFindString;
 std::string pid;
 
 void loadArgs(int argc, char* argv[]);
+bool showFullPath = false;
 bool pidExistVerify(int pid);
 bool validatePid(std::vector<std::string>* strings);
 
@@ -41,7 +42,7 @@ bool validatePid(std::vector<std::string>* strings) {
             std::cerr << "Invalid PID: " << pidVal << std::endl;
             return false;
         }
-        return fileManager(mapPath, onlyFindString, strings);
+        return fileManager(mapPath, onlyFindString, strings, showFullPath);
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return false;
@@ -50,12 +51,13 @@ bool validatePid(std::vector<std::string>* strings) {
 
 void loadArgs(int argc, char* argv[]) {
     int opt;
-    while ((opt = getopt(argc, argv, "p:f:")) != -1) {
+    while ((opt = getopt(argc, argv, "p:f:a")) != -1) { // Nota: 'a' non ha argomento
         switch (opt) {
             case 'p': pid = optarg; break;
             case 'f': onlyFindString = optarg; break;
+            case 'a': showFullPath = true; break;
             default:
-                std::cerr << "Usage: " << argv[0] << " -p <PID> [-f <filter>]\n";
+                std::cerr << "Usage: " << argv[0] << " -p <PID> [-f <filter>] [-a]\n";
                 exit(EXIT_FAILURE);
         }
     }
