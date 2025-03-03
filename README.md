@@ -32,7 +32,3 @@ cmake .. && make
 |---------|----------------------------|--------------------------|
 | `-p`    | 	Specify the target PID    | `-p 1234`               |
 | `-f`    |   Filter results (optional) | `-f "libc"`             |
-
-Interface navigation:
-- ↑/↓: List scrolling
-- `Q`: Exit the program
