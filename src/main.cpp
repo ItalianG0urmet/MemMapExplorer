@@ -35,6 +35,12 @@ bool pidExistVerify(int pid) {
 
 bool validatePid(std::vector<std::string>* strings) {
     std::string mapPath = "/proc/" + pid + "/maps";
+    for (char const &c : pid){
+      if(!std::isdigit(c)){
+        std::cerr << "PID must contain only numbers \n";
+        return false;
+      }
+    }
     try {
         if (pid.empty()) throw std::invalid_argument("No PID provided");
         int pidVal = std::stoi(pid);
