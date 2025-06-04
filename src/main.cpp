@@ -2,9 +2,9 @@
 #include <csignal>
 #include <thread>
 #include <vector>
-#include "../include/ProcessManager.h"
-#include "../include/GuiManager.h"
-#include "../include/globals.h" 
+#include "../include/ProcessManager.hpp"
+#include "../include/GuiManager.hpp"
+#include "../include/Globals.hpp" 
 
 std::string onlyFindString;
 std::string pid;

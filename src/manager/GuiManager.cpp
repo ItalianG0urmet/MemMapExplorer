@@ -1,5 +1,5 @@
-#include "../../include/GuiManager.h"
-#include "../../include/globals.h"
+#include "../../include/GuiManager.hpp"
+#include "../../include/Globals.hpp"
 #include <locale.h>
 #include <signal.h>
 
