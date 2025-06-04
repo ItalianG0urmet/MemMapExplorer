@@ -21,7 +21,9 @@ git clone https://github.com/ItalianG0urmet/linux-process-dumper-gui.git
 cd linux-process-dumper-gui
 
 # Compile the project
-cmake CMakeLists.txt
+mkdir build
+cd build
+cmake ..
 make
 
 # Run the application
