@@ -15,13 +15,16 @@ bool pidExistVerify(int pid);
 bool validatePid(std::vector<std::string>* strings);
 
 int main(int argc, char* argv[]) {
+    //Init
     std::vector<std::string> extractedPath;
     int currentLine = 1;
     int maxLineLength = 20;
 
+    //Validate pid
     loadArgs(argc, argv);
     if (!validatePid(&extractedPath)) return EXIT_FAILURE;
 
+    //Start ncurses gui
     GuiManager gui(&currentLine, &maxLineLength, &extractedPath);
     std::thread guiThread(&GuiManager::run, &gui);
     guiThread.join();
@@ -57,7 +60,7 @@ bool validatePid(std::vector<std::string>* strings) {
 
 void loadArgs(int argc, char* argv[]) {
     int opt;
-    while ((opt = getopt(argc, argv, "p:f:a")) != -1) { // Nota: 'a' non ha argomento
+    while ((opt = getopt(argc, argv, "p:f:a")) != -1) {
         switch (opt) {
             case 'p': pid = optarg; break;
             case 'f': onlyFindString = optarg; break;

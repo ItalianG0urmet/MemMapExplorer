@@ -38,9 +38,11 @@ void GuiManager::run() const {
         loadLines();
         refresh();
 
+        //Quit event
         int ch = getch();
         if(ch == 'q' || ch == 'Q') break;
 
+        //Movment event
         switch(ch) {
             case KEY_UP:
                 if(*currentLine > 0) (*currentLine)--;
