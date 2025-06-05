@@ -1,4 +1,4 @@
-# 🛠️ MemDumper ![Alpha](https://img.shields.io/badge/Status-Alpha-red)
+# 🛠️ MemDumper ![Alpha](https://img.shields.io/badge/Status-Beta-green)
 
 **MemDumper** is an utility for analyzing Linux process memory using the native /proc/ interface. It provides an interactive view of memory maps and loaded libraries.
 
