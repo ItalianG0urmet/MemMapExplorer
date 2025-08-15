@@ -1,77 +1,16 @@
-#include <iostream>
-#include <csignal>
-#include <thread>
-#include <vector>
-#include "../include/ProcessManager.hpp"
-#include "../include/GuiManager.hpp"
-#include "../include/Globals.hpp" 
-
-std::string onlyFindString;
-std::string pid;
-
-void loadArgs(int argc, char* argv[]);
-bool showFullPath = false;
-bool pidExistVerify(int pid);
-bool validatePid(std::vector<std::string>* strings);
+#include "../include/argsmanager.hpp"
+#include "../include/pidutils.hpp"
+#include "../include/guimanager.hpp"
 
 int main(int argc, char* argv[]) {
-    //Init
-    std::vector<std::string> extractedPath;
-    int currentLine = 1;
-    int maxLineLength = 20;
 
-    //Validate pid
-    loadArgs(argc, argv);
-    if (!validatePid(&extractedPath)) return EXIT_FAILURE;
+    Args args(argc, argv);
 
-    //Start ncurses gui
-    GuiManager gui(&currentLine, &maxLineLength, &extractedPath);
-    std::thread guiThread(&GuiManager::run, &gui);
-    guiThread.join();
+    if (!pid_utils::validatePid(args.pid)) return EXIT_FAILURE;
+
+    GuiManager gui(args.pid, args.onlyFindString, args.showFullPath);
+    gui.run();
 
     return EXIT_SUCCESS;
 }
 
-bool pidExistVerify(int pid) {
-    return kill(pid, 0) != 0;
-}
-
-bool validatePid(std::vector<std::string>* strings) {
-    std::string mapPath = "/proc/" + pid + "/maps";
-    for (char const &c : pid){
-      if(!std::isdigit(c)){
-        std::cerr << "PID must contain only numbers \n";
-        return false;
-      }
-    }
-    try {
-        if (pid.empty()) throw std::invalid_argument("No PID provided");
-        int pidVal = std::stoi(pid);
-        if (pidExistVerify(pidVal)) {
-            std::cerr << "Invalid PID: " << pidVal << std::endl;
-            return false;
-        }
-        return fileManager(mapPath, onlyFindString, strings, showFullPath);
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return false;
-    }
-}
-
-void loadArgs(int argc, char* argv[]) {
-    int opt;
-    while ((opt = getopt(argc, argv, "p:f:a")) != -1) {
-        switch (opt) {
-            case 'p': pid = optarg; break;
-            case 'f': onlyFindString = optarg; break;
-            case 'a': showFullPath = true; break;
-            default:
-                std::cerr << "Usage: " << argv[0] << " -p <PID> [-f <filter>] [-a]\n";
-                exit(EXIT_FAILURE);
-        }
-    }
-    if (pid.empty()) {
-        std::cerr << "Missing -p option\n";
-        exit(EXIT_FAILURE);
-    }
-}

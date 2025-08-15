@@ -1,13 +1,15 @@
-#include "../../include/GuiManager.hpp"
-#include "../../include/Globals.hpp"
+#include "../include/guimanager.hpp"
+
 #include <locale.h>
 #include <signal.h>
+
+#include "../include/processmanager.hpp"
 
 void sigwinchHandler(int) {
     endwin();
     refresh();
+    clear();
 }
-
 
 void GuiManager::initColors() {
     start_color();
@@ -18,38 +20,49 @@ void GuiManager::initColors() {
     init_pair(DEFAULT_TEXT, COLOR_WHITE, COLOR_BLACK);
 }
 
-GuiManager::GuiManager(int* currentLine, int* maxLine, std::vector<std::string>* strings)
-    : strings(strings), currentLine(currentLine), maxLine(maxLine) {}
+void GuiManager::run() {
+    std::string path = "/proc/" + pid_ + "/maps";
+    strings_ = process_manager::formactedLineGetter(path, onlyFindString_,
+                                                    showFullPath_);
 
-void GuiManager::run() const {
+    if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO)) {
+        fprintf(stderr, "[ERR] TTY not supported.\n");
+        return;
+    }
+
     setlocale(LC_ALL, "");
-    signal(SIGWINCH, sigwinchHandler);
-
     initscr();
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
     curs_set(0);
-    initColors();
 
-    while(true) {
-        clear();
+    if (has_colors()) {
+        start_color();
+        initColors();
+    }
+
+    while (true) {
+        maxLine_ = std::max(0, LINES - 5);
+
+        erase();
         createBox();
         loadLines();
         refresh();
 
-        //Quit event
         int ch = getch();
-        if(ch == 'q' || ch == 'Q') break;
+        if (ch == 'q' || ch == 'Q') break;
 
-        //Movment event
-        switch(ch) {
+        switch (ch) {
+            case 'k':
             case KEY_UP:
-                if(*currentLine > 0) (*currentLine)--;
+                if (currentLine_ > 0) currentLine_--;
                 break;
+            case 'j':
             case KEY_DOWN:
-                if(*currentLine < static_cast<int>(strings->size()) - *maxLine)
-                    (*currentLine)++;
+                int limit =
+                    std::max(0, static_cast<int>(strings_.size()) - maxLine_);
+                if (currentLine_ < limit) ++currentLine_;
                 break;
         }
     }
@@ -61,7 +74,7 @@ void GuiManager::createBox() const {
     border('|', '|', '-', '-', '+', '+', '+', '+');
 
     std::string title = " Process Memory Mapper ";
-    mvprintw(0, (COLS - title.length())/2, "%s", title.c_str());
+    mvprintw(0, (COLS - title.length()) / 2, "%s", title.c_str());
 
     drawHeader();
     drawFooter();
@@ -70,9 +83,9 @@ void GuiManager::createBox() const {
 void GuiManager::drawHeader() const {
     attron(COLOR_PAIR(HEADER));
 
-    std::string header = " PID: " + pid + " ";
-    if(!onlyFindString.empty())
-        header += "| Filter: " + onlyFindString + " ";
+    std::string header = " PID: " + pid_ + " ";
+    if (!onlyFindString_.empty())
+        header += "| Filter: " + onlyFindString_ + " ";
 
     header.resize(COLS - 4, ' ');
     mvprintw(1, 2, "%s", header.c_str());
@@ -81,15 +94,16 @@ void GuiManager::drawHeader() const {
 void GuiManager::drawFooter() const {
     attron(COLOR_PAIR(HEADER));
     std::string footer = "[Arrows] Navigate | [Q] Quit";
-    mvprintw(LINES-2, 2, "%-*s", COLS-4, footer.c_str());
+    mvprintw(LINES - 2, 2, "%-*s", COLS - 4, footer.c_str());
 }
 
 void GuiManager::loadLines() const {
     int maxVisibleLines = LINES - 5;
-    int start = *currentLine;
-    int end = std::min(start + maxVisibleLines, static_cast<int>(strings->size()));
+    int start = currentLine_;
+    int end =
+        std::min(start + maxVisibleLines, static_cast<int>(strings_.size()));
 
-    for(int i = 0; i < end - start; i++) {
+    for (int i = 0; i < end - start; i++) {
         int lineY = 3 + i;
         int globalIndex = start + i;
 
@@ -98,11 +112,11 @@ void GuiManager::loadLines() const {
 
         attron(COLOR_PAIR(DEFAULT_TEXT));
 
-        std::string text = (*strings)[globalIndex];
+        std::string text = strings_[globalIndex];
         text.resize(COLS - 10, ' ');
         mvprintw(lineY, 10, "%s", text.c_str());
 
-        if(globalIndex == *currentLine) {
+        if (globalIndex == currentLine_) {
             attron(COLOR_PAIR(HIGHLIGHT));
             mvprintw(lineY, 8, ">");
             attroff(COLOR_PAIR(HIGHLIGHT));
