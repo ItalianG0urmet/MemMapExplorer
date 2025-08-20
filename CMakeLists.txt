@@ -1,18 +1,19 @@
 cmake_minimum_required(VERSION 3.28)
-project(dumper)
+project(gdumper)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
-add_executable(dumper ${SOURCES})
-target_include_directories(dumper PRIVATE 
+add_executable(gdumper ${SOURCES})
+target_include_directories(gdumper PRIVATE 
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/gdumper
 )
 
 message(STATUS "Loading target sources...")
-target_sources(dumper PRIVATE
+target_sources(gdumper PRIVATE
     ${CMAKE_SOURCE_DIR}/src/argsmanager.cpp
     ${CMAKE_SOURCE_DIR}/src/guimanager.cpp
     ${CMAKE_SOURCE_DIR}/src/main.cpp
@@ -21,6 +22,6 @@ target_sources(dumper PRIVATE
 
 message(STATUS "Loading curses...")
 find_package(Curses REQUIRED)
-target_link_libraries(dumper PRIVATE ${CURSES_LIBRARIES})
-target_link_libraries(dumper PRIVATE ncurses tinfo)
+target_link_libraries(gdumper PRIVATE ${CURSES_LIBRARIES})
+target_link_libraries(gdumper PRIVATE ncurses tinfo)
 message(STATUS "Done!")

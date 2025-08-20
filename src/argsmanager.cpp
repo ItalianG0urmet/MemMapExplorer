@@ -1,8 +1,7 @@
-#include "../include/argsmanager.hpp"
+#include "gdumper/argsmanager.hpp"
 
 #include <iostream>
 #include <unistd.h>
-
 
 Args::Args(int argc, char* argv[]){
     int opt;

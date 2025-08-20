@@ -1,4 +1,4 @@
-#include "../include/processmanager.hpp"
+#include "gdumper/processmanager.hpp"
 
 #include <algorithm>
 #include <fstream>

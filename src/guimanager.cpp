@@ -1,9 +1,8 @@
-#include "../include/guimanager.hpp"
+#include "gdumper/guimanager.hpp"
 
-#include <locale.h>
-#include <signal.h>
+#include <unistd.h>
 
-#include "../include/processmanager.hpp"
+#include "gdumper/processmanager.hpp"
 
 void sigwinchHandler(int) {
     endwin();
@@ -21,7 +20,7 @@ void GuiManager::initColors() {
 }
 
 void GuiManager::run() {
-    std::string path = "/proc/" + pid_ + "/maps";
+    const std::string path{"/proc/" + pid_ + "/maps"};
     strings_ = process_manager::formactedLineGetter(path, onlyFindString_,
                                                     showFullPath_);
 
@@ -50,7 +49,7 @@ void GuiManager::run() {
         loadLines();
         refresh();
 
-        int ch = getch();
+        const int ch{getch()};
         if (ch == 'q' || ch == 'Q') break;
 
         switch (ch) {
@@ -60,8 +59,8 @@ void GuiManager::run() {
                 break;
             case 'j':
             case KEY_DOWN:
-                int limit =
-                    std::max(0, static_cast<int>(strings_.size()) - maxLine_);
+                const int limit{
+                    std::max(0, static_cast<int>(strings_.size()) - maxLine_)};
                 if (currentLine_ < limit) ++currentLine_;
                 break;
         }
@@ -73,7 +72,7 @@ void GuiManager::createBox() const {
     attron(COLOR_PAIR(FRAME));
     border('|', '|', '-', '-', '+', '+', '+', '+');
 
-    std::string title = " Process Memory Mapper ";
+    const std::string title{" Process Memory Mapper "};
     mvprintw(0, (COLS - title.length()) / 2, "%s", title.c_str());
 
     drawHeader();
@@ -83,7 +82,7 @@ void GuiManager::createBox() const {
 void GuiManager::drawHeader() const {
     attron(COLOR_PAIR(HEADER));
 
-    std::string header = " PID: " + pid_ + " ";
+    std::string header{" PID: " + pid_ + " "};
     if (!onlyFindString_.empty())
         header += "| Filter: " + onlyFindString_ + " ";
 
@@ -93,26 +92,26 @@ void GuiManager::drawHeader() const {
 
 void GuiManager::drawFooter() const {
     attron(COLOR_PAIR(HEADER));
-    std::string footer = "[Arrows] Navigate | [Q] Quit";
+    const std::string footer{"[Arrows] Navigate | [Q] Quit"};
     mvprintw(LINES - 2, 2, "%-*s", COLS - 4, footer.c_str());
 }
 
 void GuiManager::loadLines() const {
-    int maxVisibleLines = LINES - 5;
-    int start = currentLine_;
-    int end =
-        std::min(start + maxVisibleLines, static_cast<int>(strings_.size()));
+    const int maxVisibleLines{LINES - 5};
+    const int start{currentLine_};
+    const int end{
+        std::min(start + maxVisibleLines, static_cast<int>(strings_.size()))};
 
     for (int i = 0; i < end - start; i++) {
-        int lineY = 3 + i;
-        int globalIndex = start + i;
+        const int lineY {3 + i};
+        const int globalIndex {start + i};
 
         attron(COLOR_PAIR(LINE_NUMBER));
         mvprintw(lineY, 2, "%04d", globalIndex + 1);
 
         attron(COLOR_PAIR(DEFAULT_TEXT));
 
-        std::string text = strings_[globalIndex];
+        std::string text {strings_[globalIndex]};
         text.resize(COLS - 10, ' ');
         mvprintw(lineY, 10, "%s", text.c_str());
 

@@ -1,6 +1,6 @@
-#include "../include/argsmanager.hpp"
-#include "../include/pidutils.hpp"
-#include "../include/guimanager.hpp"
+#include "gdumper/argsmanager.hpp"
+#include "gdumper/pidutils.hpp"
+#include "gdumper/guimanager.hpp"
 
 int main(int argc, char* argv[]) {
 
