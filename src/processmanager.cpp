@@ -9,31 +9,32 @@
 namespace process_manager {
 std::string lineFormatter(const std::string& defaultLine,
                           const std::string& findOnly, bool showFullPath) {
-    size_t lastSpace = defaultLine.find_last_of(' ');
+    const size_t lastSpace{defaultLine.find_last_of(' ')};
     if (lastSpace == std::string::npos) return IGNORE_PRESET;
 
-    std::string path = defaultLine.substr(lastSpace + 1);
+    std::string path{defaultLine.substr(lastSpace + 1)};
     if (path.empty() || path.find('/') == std::string::npos)
         return IGNORE_PRESET;
 
     if (!showFullPath) {
-        size_t lastSlash = path.find_last_of('/');
+        const size_t lastSlash{path.find_last_of('/')};
         if (lastSlash != std::string::npos) {
             path = path.substr(lastSlash + 1);
         }
     }
 
-    std::string pathLower = path;
+    std::string pathLower{path};
     std::transform(pathLower.begin(), pathLower.end(), pathLower.begin(),
                    ::tolower);
 
-    std::string filterLower = findOnly;
+    std::string filterLower{findOnly};
     std::transform(filterLower.begin(), filterLower.end(), filterLower.begin(),
                    ::tolower);
 
     if (findOnly.empty() || pathLower.find(filterLower) != std::string::npos) {
         return path;
     }
+
     return IGNORE_PRESET;
 }
 
@@ -51,8 +52,8 @@ std::vector<std::string> formactedLineGetter(const std::string path,
     std::string line;
 
     while (getline(infile, line)) {
-        const std::string formactedLine =
-            lineFormatter(line, findOnly, showFullPath);
+        const std::string formactedLine{
+            lineFormatter(line, findOnly, showFullPath)};
         if (formactedLine != IGNORE_PRESET &&
             seenLines.insert(formactedLine).second) {
             formactedLineVector.push_back(formactedLine);
