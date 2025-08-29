@@ -1,30 +1,48 @@
 #include "gdumper/argsmanager.hpp"
 
-#include <iostream>
 #include <unistd.h>
 
-Args::Args(int argc, char* argv[]){
+#include <stdexcept>
+
+std::expected<Args, std::string> Args::parse(int argc, char* argv[]) {
+    Args args;
     int opt;
+
+    bool pidGiven = false;
+
+    opterr = 0;
     while ((opt = getopt(argc, argv, "p:f:a")) != -1) {
         switch (opt) {
             case 'p':
-                pid = optarg;
+                try {
+                    args.pid = std::stol(optarg);
+                    pidGiven = true;
+                } catch (const std::invalid_argument&) {
+                    return std::unexpected(std::string("Invalid PID (not a number): ") +
+                                           optarg);
+                } catch (const std::out_of_range&) {
+                    return std::unexpected(std::string("PID out of range: ") + optarg);
+                }
                 break;
+
             case 'f':
-                onlyFindString = optarg;
+                if (!optarg || *optarg == '\0')
+                    return std::unexpected("Argument for -f missing");
+                args.onlyFindString = optarg;
                 break;
+
             case 'a':
-                showFullPath = true;
+                args.showFullPath = true;
                 break;
+
+            case '?':
             default:
-                std::cerr << "Usage: " << argv[0]
-                          << " -p <PID> [-f <filter>] [-a]\n";
-                exit(EXIT_FAILURE);
+                return std::unexpected("Use: -p <PID> [-f <filter>] [-a]");
         }
     }
 
-    if (pid.empty()) {
-        std::cerr << "Missing -p option\n";
-        exit(EXIT_FAILURE);
+    if (!pidGiven) {
+        return std::unexpected("Use: -p <PID> [-f <filter>] [-a]");
     }
+    return args;
 }

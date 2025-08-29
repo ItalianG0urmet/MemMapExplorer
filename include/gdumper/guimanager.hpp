@@ -6,7 +6,7 @@
 
 class GuiManager {
    public:
-    GuiManager(std::string pid, std::string onlyFindString, bool showFullPath)
+    GuiManager(pid_t pid, std::string onlyFindString, bool showFullPath)
         : pid_(pid),
           onlyFindString_(onlyFindString),
           showFullPath_(showFullPath),
@@ -16,7 +16,7 @@ class GuiManager {
     static void initColors();
 
    private:
-    std::string pid_;
+    pid_t pid_;
     std::string onlyFindString_;
     bool showFullPath_;
 

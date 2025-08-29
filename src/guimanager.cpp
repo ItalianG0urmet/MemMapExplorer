@@ -20,7 +20,7 @@ void GuiManager::initColors() {
 }
 
 void GuiManager::run() {
-    const std::string path{"/proc/" + pid_ + "/maps"};
+    const std::string path{"/proc/" + std::to_string(pid_) + "/maps"};
     strings_ = process_manager::formactedLineGetter(path, onlyFindString_,
                                                     showFullPath_);
 
@@ -82,7 +82,7 @@ void GuiManager::createBox() const {
 void GuiManager::drawHeader() const {
     attron(COLOR_PAIR(HEADER));
 
-    std::string header{" PID: " + pid_ + " "};
+    std::string header{" PID: " + std::to_string(pid_) + " "};
     if (!onlyFindString_.empty())
         header += "| Filter: " + onlyFindString_ + " ";
 
