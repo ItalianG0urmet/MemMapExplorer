@@ -1,13 +1,13 @@
 #include "gdumper/processmanager.hpp"
 
 #include <algorithm>
+#include <expected>
 #include <fstream>
 #include <set>
-#include <expected>
 
 #define IGNORE_PRESET "ignore"
 
-namespace process_manager {
+namespace processManager {
 std::string lineFormatter(const std::string& defaultLine,
                           const std::string& findOnly, bool showFullPath) {
     const size_t lastSpace{defaultLine.find_last_of(' ')};
@@ -39,9 +39,8 @@ std::string lineFormatter(const std::string& defaultLine,
     return IGNORE_PRESET;
 }
 
-std::expected<std::vector<std::string>, std::string> formactedLineGetter(const std::string path,
-                                             const std::string findOnly,
-                                             bool showFullPath) {
+std::expected<std::vector<std::string>, std::string> formactedLineGetter(
+    const std::string path, const std::string findOnly, bool showFullPath) {
     std::ifstream infile(path);
     if (!infile.is_open()) {
         return std::unexpected("Error while opening map file");
@@ -63,4 +62,4 @@ std::expected<std::vector<std::string>, std::string> formactedLineGetter(const s
     infile.close();
     return formactedLineVector;
 }
-}  // namespace process_manager
+}  // namespace processManager

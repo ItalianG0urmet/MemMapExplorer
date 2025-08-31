@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace process_manager {
+namespace processManager {
 
 std::string lineFormatter(const std::string& defaultLine,
                           const std::string& findOnly, bool showFullPath);
