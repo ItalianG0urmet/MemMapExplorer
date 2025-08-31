@@ -8,8 +8,8 @@
 #define IGNORE_PRESET "ignore"
 
 namespace processManager {
-std::string lineFormatter(const std::string& defaultLine,
-                          const std::string& findOnly, bool showFullPath) {
+std::string lineFormatter(const std::string_view defaultLine,
+                          const std::string_view findOnly, bool showFullPath) {
     const size_t lastSpace{defaultLine.find_last_of(' ')};
     if (lastSpace == std::string::npos) return IGNORE_PRESET;
 
