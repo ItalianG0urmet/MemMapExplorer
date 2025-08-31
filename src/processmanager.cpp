@@ -39,7 +39,7 @@ std::string lineFormatter(const std::string& defaultLine,
     return IGNORE_PRESET;
 }
 
-std::expected<std::vector<std::string>, std::string> formactedLineGetter(
+std::expected<std::vector<std::string>, std::string> getFormactedLine(
     const std::string path, const std::string findOnly, bool showFullPath) {
     std::ifstream infile(path);
     if (!infile.is_open()) {
