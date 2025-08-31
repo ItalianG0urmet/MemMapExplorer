@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
     }
     Args args = argsOrError.value();
 
-    auto pidOrErr = pid_utils::validatePid(args.pid);
+    auto pidOrErr = pidUtils::validatePid(args.pid);
     if (!pidOrErr) {
         std::cerr << pidOrErr.error() << "\n";
         return EXIT_FAILURE;

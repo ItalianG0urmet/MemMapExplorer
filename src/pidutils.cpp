@@ -4,7 +4,7 @@
 
 #include <cerrno>
 
-namespace pid_utils {
+namespace pidUtils {
 
 bool pidExists(pid_t pid) {
     if (pid <= 0) return false;
