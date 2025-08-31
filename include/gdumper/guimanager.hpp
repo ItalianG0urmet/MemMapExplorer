@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <expected>
 
 class GuiManager {
    public:
@@ -12,10 +13,11 @@ class GuiManager {
           showFullPath_(showFullPath),
           currentLine_(0),
           maxLine_(0) {}
-    void run();
+    std::expected<void, std::string> run();
     static void initColors();
 
    private:
+    bool running_;
     pid_t pid_;
     std::string onlyFindString_;
     bool showFullPath_;

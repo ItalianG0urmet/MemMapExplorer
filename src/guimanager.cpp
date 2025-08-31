@@ -2,6 +2,8 @@
 
 #include <unistd.h>
 
+#include <expected>
+
 #include "gdumper/processmanager.hpp"
 
 void sigwinchHandler(int) {
@@ -19,14 +21,18 @@ void GuiManager::initColors() {
     init_pair(DEFAULT_TEXT, COLOR_WHITE, COLOR_BLACK);
 }
 
-void GuiManager::run() {
+std::expected<void, std::string> GuiManager::run() {
     const std::string path{"/proc/" + std::to_string(pid_) + "/maps"};
-    strings_ = process_manager::formactedLineGetter(path, onlyFindString_,
-                                                    showFullPath_);
+
+    auto pathsOrErr = process_manager::formactedLineGetter(
+        path, onlyFindString_, showFullPath_);
+    if (!pathsOrErr) {
+        return std::unexpected("Can't open map file");
+    }
+    strings_ = pathsOrErr.value();
 
     if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO)) {
-        fprintf(stderr, "[ERR] TTY not supported.\n");
-        return;
+        return std::unexpected("TTY not supported");
     }
 
     setlocale(LC_ALL, "");
@@ -41,7 +47,8 @@ void GuiManager::run() {
         initColors();
     }
 
-    while (true) {
+    running_ = true;
+    while (running_) {
         maxLine_ = std::max(0, LINES - 5);
 
         erase();
@@ -50,7 +57,10 @@ void GuiManager::run() {
         refresh();
 
         const int ch{getch()};
-        if (ch == 'q' || ch == 'Q') break;
+        if (ch == 'q' || ch == 'Q') {
+            running_ = false;
+            break;
+        }
 
         switch (ch) {
             case 'k':
@@ -66,6 +76,7 @@ void GuiManager::run() {
         }
     }
     endwin();
+    return {};
 }
 
 void GuiManager::createBox() const {
@@ -103,15 +114,15 @@ void GuiManager::loadLines() const {
         std::min(start + maxVisibleLines, static_cast<int>(strings_.size()))};
 
     for (int i = 0; i < end - start; i++) {
-        const int lineY {3 + i};
-        const int globalIndex {start + i};
+        const int lineY{3 + i};
+        const int globalIndex{start + i};
 
         attron(COLOR_PAIR(LINE_NUMBER));
         mvprintw(lineY, 2, "%04d", globalIndex + 1);
 
         attron(COLOR_PAIR(DEFAULT_TEXT));
 
-        std::string text {strings_[globalIndex]};
+        std::string text{strings_[globalIndex]};
         text.resize(COLS - 10, ' ');
         mvprintw(lineY, 10, "%s", text.c_str());
 

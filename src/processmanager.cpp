@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <fstream>
 #include <set>
+#include <expected>
 
 #define IGNORE_PRESET "ignore"
 
@@ -38,13 +39,12 @@ std::string lineFormatter(const std::string& defaultLine,
     return IGNORE_PRESET;
 }
 
-std::vector<std::string> formactedLineGetter(const std::string path,
+std::expected<std::vector<std::string>, std::string> formactedLineGetter(const std::string path,
                                              const std::string findOnly,
                                              bool showFullPath) {
     std::ifstream infile(path);
     if (!infile.is_open()) {
-        std::printf("Error while opening the map file");
-        exit(1);
+        return std::unexpected("Error while opening map file");
     };
 
     std::vector<std::string> formactedLineVector;
