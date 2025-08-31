@@ -1,15 +1,17 @@
 #include "gdumper/guimanager.hpp"
 
 #include <unistd.h>
-
 #include <expected>
-
 #include "gdumper/processmanager.hpp"
 
-void sigwinchHandler(int) {
+void GuiManager::handleResize() {
     endwin();
     refresh();
     clear();
+    maxLine_ = std::max(0, LINES - 5);
+    createBox();
+    loadLines();
+    refresh();
 }
 
 void GuiManager::initColors() {
@@ -24,10 +26,9 @@ void GuiManager::initColors() {
 std::expected<void, std::string> GuiManager::run() {
     const std::string path{"/proc/" + std::to_string(pid_) + "/maps"};
 
-    auto pathsOrErr = processManager::getFormactedLine(path, onlyFindString_,
-                                                          showFullPath_);
+    auto pathsOrErr = processManager::getFormactedLine(path, onlyFindString_, showFullPath_);
     if (!pathsOrErr) {
-        return std::unexpected("Can't open map file");
+        return std::unexpected("Error opening map file: " + path);
     }
     strings_ = pathsOrErr.value();
 
@@ -47,9 +48,16 @@ std::expected<void, std::string> GuiManager::run() {
         initColors();
     }
 
+    int lastLines = LINES;
+    int lastCols  = COLS;
+
     running_ = true;
     while (running_) {
-        maxLine_ = std::max(0, LINES - 5);
+        if (LINES != lastLines || COLS != lastCols) {
+            lastLines = LINES;
+            lastCols  = COLS;
+            handleResize();
+        }
 
         erase();
         createBox();
@@ -69,12 +77,12 @@ std::expected<void, std::string> GuiManager::run() {
                 break;
             case 'j':
             case KEY_DOWN:
-                const int limit{
-                    std::max(0, static_cast<int>(strings_.size()) - maxLine_)};
+                const int limit{ std::max(0, static_cast<int>(strings_.size()) - maxLine_) };
                 if (currentLine_ < limit) ++currentLine_;
                 break;
         }
     }
+
     endwin();
     return {};
 }
@@ -110,8 +118,7 @@ void GuiManager::drawFooter() const {
 void GuiManager::loadLines() const {
     const int maxVisibleLines{LINES - 5};
     const int start{currentLine_};
-    const int end{
-        std::min(start + maxVisibleLines, static_cast<int>(strings_.size()))};
+    const int end{ std::min(start + maxVisibleLines, static_cast<int>(strings_.size())) };
 
     for (int i = 0; i < end - start; i++) {
         const int lineY{3 + i};
@@ -133,3 +140,4 @@ void GuiManager::loadLines() const {
         }
     }
 }
+
