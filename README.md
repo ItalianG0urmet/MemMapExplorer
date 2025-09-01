@@ -13,6 +13,7 @@
 ## 📦 Prerequisites
 - Linux system (kernel 4.4+)
 - Ncurses library
+- C++ 23
 
 ## 🚀 Prerequisites
 ```bash
