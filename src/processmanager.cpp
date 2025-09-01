@@ -32,11 +32,10 @@ std::string lineFormatter(const std::string_view defaultLine,
     std::transform(filterLower.begin(), filterLower.end(), filterLower.begin(),
                    ::tolower);
 
-    if (findOnly.empty() || pathLower.find(filterLower) != std::string::npos) {
-        return path;
-    }
-
-    return IGNORE_PRESET;
+    return (findOnly.empty() ||
+            pathLower.find(filterLower) != std::string::npos)
+               ? path
+               : IGNORE_PRESET;
 }
 
 std::expected<std::vector<std::string>, std::string> getFormactedLine(
