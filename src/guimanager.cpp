@@ -89,10 +89,6 @@ std::expected<void, std::string> GuiManager::run() {
 
 void GuiManager::createBox() const {
     attron(COLOR_PAIR(FRAME));
-    border('|', '|', '-', '-', '+', '+', '+', '+');
-
-    const std::string title{" Process Memory Mapper "};
-    mvprintw(0, (COLS - title.length()) / 2, "%s", title.c_str());
 
     drawHeader();
     drawFooter();
