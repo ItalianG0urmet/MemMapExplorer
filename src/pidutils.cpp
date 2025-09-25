@@ -6,7 +6,7 @@
 
 namespace pidUtils {
 
-bool pidExists(pid_t pid) {
+bool pidExists(pid_t& pid) {
     if (pid <= 0) return false;
     errno = 0;
     int r = kill(pid, 0);
@@ -15,7 +15,7 @@ bool pidExists(pid_t pid) {
     return false;
 }
 
-std::expected<pid_t, std::string> validatePid(pid_t pid) noexcept {
+std::expected<pid_t, std::string> validatePid(pid_t& pid) noexcept {
     if (pid <= 0) return std::unexpected(std::string{"Invalid PID (must be positive)"});
     if (!pidExists(pid)) return std::unexpected(std::string{"No process with PID " + std::to_string(pid)});
     return pid;
