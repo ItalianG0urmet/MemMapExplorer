@@ -21,6 +21,7 @@ int main(int argc, char* argv[]) {
     GuiManager gui(pidOrErr.value(), args.onlyFindString, args.showFullPath);
     if (auto check = gui.run(); !check) {
         std::cerr << check.error() << "\n";
+        return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;
