@@ -5,17 +5,17 @@
 #include "gdumper/processmanager.hpp"
 
 void GuiManager::handleResize() {
-    endwin();
-    refresh();
-    clear();
     maxLine_ = std::max(0, LINES - 5);
+    if (currentLine_ > std::max(0, static_cast<int>(strings_.size()) - maxLine_)) {
+        currentLine_ = std::max(0, static_cast<int>(strings_.size()) - maxLine_);
+    }
+    erase();
     createBox();
     loadLines();
     refresh();
 }
 
 void GuiManager::initColors() {
-    start_color();
     init_pair(FRAME, COLOR_CYAN, COLOR_BLACK);
     init_pair(HEADER, COLOR_WHITE, COLOR_BLUE);
     init_pair(HIGHLIGHT, COLOR_YELLOW, COLOR_BLACK);
