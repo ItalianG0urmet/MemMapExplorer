@@ -26,11 +26,12 @@ std::optional<std::string> formatLine(std::string_view defaultLine,
 
     std::string pathLower{path};
     std::transform(pathLower.begin(), pathLower.end(), pathLower.begin(),
-                   ::tolower);
+                   [](unsigned char c){ return static_cast<char>(std::tolower(c)); });
 
     std::string filterLower{findOnly};
     std::transform(filterLower.begin(), filterLower.end(), filterLower.begin(),
-                   ::tolower);
+                   [](unsigned char c){ return static_cast<char>(std::tolower(c)); });
+
 
     return (findOnly.empty() ||
             pathLower.find(filterLower) != std::string::npos)
