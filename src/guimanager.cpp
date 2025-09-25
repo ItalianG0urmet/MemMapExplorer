@@ -26,7 +26,7 @@ void GuiManager::initColors() {
 std::expected<void, std::string> GuiManager::run() {
     const std::string path{"/proc/" + std::to_string(pid_) + "/maps"};
 
-    auto pathsOrErr = processManager::getFormactedLine(path, onlyFindString_, showFullPath_);
+    auto pathsOrErr = processManager::getFormattedLines(path, onlyFindString_, showFullPath_);
     if (!pathsOrErr) {
         return std::unexpected("Error opening map file: " + path);
     }
