@@ -3,19 +3,19 @@
 #include <algorithm>
 #include <expected>
 #include <fstream>
+#include <optional>
 #include <set>
 
-#define IGNORE_PRESET "ignore"
-
 namespace processManager {
-std::string lineFormatter(const std::string_view defaultLine,
-                          const std::string_view findOnly, bool showFullPath) {
+std::optional<std::string> formatLine(std::string_view defaultLine,
+                                      std::string_view findOnly,
+                                      bool showFullPath) {
     const size_t lastSpace{defaultLine.find_last_of(' ')};
-    if (lastSpace == std::string::npos) return IGNORE_PRESET;
+    if (lastSpace == std::string::npos) return std::nullopt;
 
     std::string path{defaultLine.substr(lastSpace + 1)};
     if (path.empty() || path.find('/') == std::string::npos)
-        return IGNORE_PRESET;
+        return std::nullopt;
 
     if (!showFullPath) {
         const size_t lastSlash{path.find_last_of('/')};
@@ -34,12 +34,12 @@ std::string lineFormatter(const std::string_view defaultLine,
 
     return (findOnly.empty() ||
             pathLower.find(filterLower) != std::string::npos)
-               ? path
-               : IGNORE_PRESET;
+               ? std::optional<std::string>{path}
+               : std::nullopt;
 }
 
-std::expected<std::vector<std::string>, std::string> getFormactedLine(
-    const std::string path, const std::string findOnly, bool showFullPath) {
+std::expected<std::vector<std::string>, std::string> getFormattedLines(
+    const std::string& path, std::string_view findOnly, bool showFullPath) {
     std::ifstream infile(path);
     if (!infile.is_open()) {
         return std::unexpected("Error while opening map file");
@@ -50,11 +50,9 @@ std::expected<std::vector<std::string>, std::string> getFormactedLine(
     std::string line;
 
     while (getline(infile, line)) {
-        const std::string formactedLine{
-            lineFormatter(line, findOnly, showFullPath)};
-        if (formactedLine != IGNORE_PRESET &&
-            seenLines.insert(formactedLine).second) {
-            formactedLineVector.push_back(formactedLine);
+        const auto formactedLine = formatLine(line, findOnly, showFullPath);
+        if (formactedLine && seenLines.insert(*formactedLine).second) {
+            formactedLineVector.push_back(*formactedLine);
         }
     }
 
