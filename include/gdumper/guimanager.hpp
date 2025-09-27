@@ -34,6 +34,7 @@ class GuiManager {
     void loadLines() const;
     void drawHeader() const;
     void drawFooter() const;
+    std::expected<void, std::string> reloadStrings(std::string path);
 
     enum ColorTheme { FRAME = 1, HEADER, HIGHLIGHT, LINE_NUMBER, DEFAULT_TEXT };
 };

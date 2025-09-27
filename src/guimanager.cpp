@@ -1,13 +1,32 @@
 #include "gdumper/guimanager.hpp"
 
 #include <unistd.h>
+
 #include <expected>
+
 #include "gdumper/processmanager.hpp"
+
+std::expected<void, std::string> GuiManager::reloadStrings(std::string path) {
+    auto pathsOrErr =
+        processManager::getFormattedLines(path, onlyFindString_, showFullPath_);
+    if (!pathsOrErr) {
+        return std::unexpected("Error opening map file: " + path);
+    }
+    strings_ = pathsOrErr.value();
+    currentLine_ = 0;
+    erase();
+    createBox();
+    loadLines();
+    refresh();
+    return {};
+}
 
 void GuiManager::handleResize() {
     maxLine_ = std::max(0, LINES - 5);
-    if (currentLine_ > std::max(0, static_cast<int>(strings_.size()) - maxLine_)) {
-        currentLine_ = std::max(0, static_cast<int>(strings_.size()) - maxLine_);
+    if (currentLine_ >
+        std::max(0, static_cast<int>(strings_.size()) - maxLine_)) {
+        currentLine_ =
+            std::max(0, static_cast<int>(strings_.size()) - maxLine_);
     }
     erase();
     createBox();
@@ -26,7 +45,8 @@ void GuiManager::initColors() {
 std::expected<void, std::string> GuiManager::run() {
     const std::string path{"/proc/" + std::to_string(pid_) + "/maps"};
 
-    auto pathsOrErr = processManager::getFormattedLines(path, onlyFindString_, showFullPath_);
+    auto pathsOrErr =
+        processManager::getFormattedLines(path, onlyFindString_, showFullPath_);
     if (!pathsOrErr) {
         return std::unexpected("Error opening map file: " + path);
     }
@@ -49,13 +69,13 @@ std::expected<void, std::string> GuiManager::run() {
     }
 
     int lastLines = LINES;
-    int lastCols  = COLS;
+    int lastCols = COLS;
 
     running_ = true;
     while (running_) {
         if (LINES != lastLines || COLS != lastCols) {
             lastLines = LINES;
-            lastCols  = COLS;
+            lastCols = COLS;
             handleResize();
         }
 
@@ -71,15 +91,30 @@ std::expected<void, std::string> GuiManager::run() {
         }
 
         switch (ch) {
+            case 'r': {  // Reload
+                if (auto check = reloadStrings(path); !check) {
+                    return std::unexpected(check.error());
+                }
+                break;
+            }
+            case 'p': {  // Switch Paths
+                showFullPath_ = !showFullPath_;
+                if (auto check = reloadStrings(path); !check) {
+                    return std::unexpected(check.error());
+                }
+                break;
+            }
             case 'k':
             case KEY_UP:
                 if (currentLine_ > 0) currentLine_--;
                 break;
             case 'j':
-            case KEY_DOWN:
-                const int limit{ std::max(0, static_cast<int>(strings_.size()) - maxLine_) };
+            case KEY_DOWN: {
+                const int limit{
+                    std::max(0, static_cast<int>(strings_.size()) - maxLine_)};
                 if (currentLine_ < limit) ++currentLine_;
                 break;
+            }
         }
     }
 
@@ -107,14 +142,15 @@ void GuiManager::drawHeader() const {
 
 void GuiManager::drawFooter() const {
     attron(COLOR_PAIR(HEADER));
-    const std::string footer{"[Arrows] Navigate | [Q] Quit"};
+    const std::string footer{"[Arrows] Navigate | [q] Quit | [r] Reload | [p] Toggle path"};
     mvprintw(LINES - 2, 2, "%-*s", COLS - 4, footer.c_str());
 }
 
 void GuiManager::loadLines() const {
     const int maxVisibleLines{LINES - 5};
     const int start{currentLine_};
-    const int end{ std::min(start + maxVisibleLines, static_cast<int>(strings_.size())) };
+    const int end{
+        std::min(start + maxVisibleLines, static_cast<int>(strings_.size()))};
 
     for (int i = 0; i < end - start; i++) {
         const int lineY{3 + i};
