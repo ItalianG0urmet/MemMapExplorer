@@ -15,21 +15,22 @@ class GuiManager {
           maxLine_(0) {}
 
     std::expected<void, std::string> run();
-    static void initColors();
 
    private:
     bool running_ = false;
-    pid_t pid_ = 0;
-    std::string onlyFindString_{};
     bool showFullPath_ = false;
 
+    std::string onlyFindString_{};
     std::vector<std::string> strings_;
+
     int currentLine_ = 0;
     int maxLine_ = 0;
     int lastLines_ = 0;
     int lastCols_ = 0;
+    pid_t pid_ = 0;
 
     void handleResize();
+    void initColors() const;
     void createBox() const;
     void loadLines() const;
     void drawHeader() const;

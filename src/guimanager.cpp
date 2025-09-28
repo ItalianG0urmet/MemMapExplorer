@@ -34,14 +34,6 @@ void GuiManager::handleResize() {
     refresh();
 }
 
-void GuiManager::initColors() {
-    init_pair(FRAME, COLOR_WHITE, COLOR_BLACK);
-    init_pair(HEADER, COLOR_BLACK, COLOR_WHITE);
-    init_pair(DEFAULT_TEXT, COLOR_WHITE, COLOR_BLACK);
-    init_pair(LINE_NUMBER, COLOR_CYAN, COLOR_BLACK);
-    init_pair(HIGHLIGHT, COLOR_YELLOW, COLOR_BLACK);
-}
-
 std::expected<void, std::string> GuiManager::run() {
     const std::string path{"/proc/" + std::to_string(pid_) + "/maps"};
 
@@ -99,17 +91,17 @@ std::expected<void, std::string> GuiManager::run() {
                 }
                 break;
             }
-            case 'q': // Quit
+            case 'q':  // Quit
                 running_ = false;
                 break;
             case 'k':
-            case KEY_UP: // Up
+            case KEY_UP:  // Up
                 if (currentLine_ > 0) currentLine_--;
                 break;
-            case 'j': // Down
+            case 'j':  // Down
             case KEY_DOWN: {
-                const int limit{
-                    std::max(0, static_cast<int>(strings_.size()) - maxLine_ - 1)};
+                const int limit{std::max(
+                    0, static_cast<int>(strings_.size()) - maxLine_ - 1)};
                 if (currentLine_ < limit) ++currentLine_;
                 break;
             }
@@ -118,6 +110,14 @@ std::expected<void, std::string> GuiManager::run() {
 
     endwin();
     return {};
+}
+
+void GuiManager::initColors() const {
+    init_pair(FRAME, COLOR_WHITE, COLOR_BLACK);
+    init_pair(HEADER, COLOR_BLACK, COLOR_WHITE);
+    init_pair(DEFAULT_TEXT, COLOR_WHITE, COLOR_BLACK);
+    init_pair(LINE_NUMBER, COLOR_CYAN, COLOR_BLACK);
+    init_pair(HIGHLIGHT, COLOR_YELLOW, COLOR_BLACK);
 }
 
 void GuiManager::createBox() const {
