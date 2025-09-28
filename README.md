@@ -50,9 +50,11 @@ make
 
 **Keyboard navigation inside the interface:**
 
-* `↑ / k` → Scroll up
-* `↓ / j` → Scroll down
-* `q` → Quit the interface
+* `↑ / k` → Scroll up  
+* `↓ / j` → Scroll down  
+* `q`     → Quit the interface  
+* `r`     → Reload  
+* `p`     → Toggle paths  
 
 ## Testing
 
