@@ -85,11 +85,6 @@ std::expected<void, std::string> GuiManager::run() {
         refresh();
 
         const int ch{getch()};
-        if (ch == 'q' || ch == 'Q') {
-            running_ = false;
-            break;
-        }
-
         switch (ch) {
             case 'r': {  // Reload
                 if (auto check = reloadStrings(path); !check) {
@@ -104,11 +99,14 @@ std::expected<void, std::string> GuiManager::run() {
                 }
                 break;
             }
+            case 'q': // Quit
+                running_ = false;
+                break;
             case 'k':
-            case KEY_UP:
+            case KEY_UP: // Up
                 if (currentLine_ > 0) currentLine_--;
                 break;
-            case 'j':
+            case 'j': // Down
             case KEY_DOWN: {
                 const int limit{
                     std::max(0, static_cast<int>(strings_.size()) - maxLine_)};
@@ -142,7 +140,8 @@ void GuiManager::drawHeader() const {
 
 void GuiManager::drawFooter() const {
     attron(COLOR_PAIR(HEADER));
-    const std::string footer{"[Arrows] Navigate | [q] Quit | [r] Reload | [p] Toggle path"};
+    const std::string footer{
+        "[Arrows] Navigate | [q] Quit | [r] Reload | [p] Toggle path"};
     mvprintw(LINES - 2, 2, "%-*s", COLS - 4, footer.c_str());
 }
 
