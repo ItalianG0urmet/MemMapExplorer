@@ -35,11 +35,11 @@ void GuiManager::handleResize() {
 }
 
 void GuiManager::initColors() {
-    init_pair(FRAME, COLOR_CYAN, COLOR_BLACK);
-    init_pair(HEADER, COLOR_WHITE, COLOR_BLUE);
-    init_pair(HIGHLIGHT, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(LINE_NUMBER, COLOR_CYAN, COLOR_BLACK);
+    init_pair(FRAME, COLOR_WHITE, COLOR_BLACK);
+    init_pair(HEADER, COLOR_BLACK, COLOR_WHITE);
     init_pair(DEFAULT_TEXT, COLOR_WHITE, COLOR_BLACK);
+    init_pair(LINE_NUMBER, COLOR_CYAN, COLOR_BLACK);
+    init_pair(HIGHLIGHT, COLOR_YELLOW, COLOR_BLACK);
 }
 
 std::expected<void, std::string> GuiManager::run() {
@@ -109,7 +109,7 @@ std::expected<void, std::string> GuiManager::run() {
             case 'j': // Down
             case KEY_DOWN: {
                 const int limit{
-                    std::max(0, static_cast<int>(strings_.size()) - maxLine_)};
+                    std::max(0, static_cast<int>(strings_.size()) - maxLine_ - 1)};
                 if (currentLine_ < limit) ++currentLine_;
                 break;
             }
@@ -146,7 +146,7 @@ void GuiManager::drawFooter() const {
 }
 
 void GuiManager::loadLines() const {
-    const int maxVisibleLines{LINES - 5};
+    const int maxVisibleLines{LINES - 6};
     const int start{currentLine_};
     const int end{
         std::min(start + maxVisibleLines, static_cast<int>(strings_.size()))};
