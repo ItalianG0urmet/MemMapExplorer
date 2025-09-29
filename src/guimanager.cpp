@@ -1,12 +1,14 @@
 #include "gdumper/guimanager.hpp"
 
+#include <ncurses.h>
 #include <unistd.h>
 
 #include <expected>
+#include <string>
 
 #include "gdumper/processmanager.hpp"
 
-std::expected<void, std::string> GuiManager::reloadStrings(std::string path) {
+std::expected<void, std::string> GuiManager::reloadStrings(const std::string& path) {
     auto pathsOrErr =
         processManager::getFormattedLines(path, onlyFindString_, showFullPath_);
     if (!pathsOrErr) {
@@ -18,6 +20,58 @@ std::expected<void, std::string> GuiManager::reloadStrings(std::string path) {
     createBox();
     loadLines();
     refresh();
+    return {};
+}
+
+std::expected<void, std::string> GuiManager::handleSearch(const std::string& path) {
+    inputBuffer_.clear();
+    const size_t MAX_INPUT = 256;
+    bool writing = true;
+
+    auto drawPrompt = [&]() {
+        mvprintw(2, 2, "/");
+        mvprintw(2, 3, "%-*s", COLS - 4, inputBuffer_.c_str());
+        move(2, 3 + inputBuffer_.size());
+        refresh();
+    };
+
+    attron(COLOR_PAIR(DEFAULT_TEXT));
+    drawPrompt();
+    curs_set(1);
+
+    while (writing) {
+        int chn = getch();
+        switch (chn) {
+            case 10:  // Enter
+            case KEY_ENTER:
+                onlyFindString_ = inputBuffer_;
+                if (auto check = reloadStrings(path); !check)
+                    return std::unexpected(check.error());
+                writing = false;
+                break;
+
+            case 27:  // Escape
+                writing = false;
+                break;
+
+            case KEY_BACKSPACE:
+            case 127:
+                if (!inputBuffer_.empty()) {
+                    inputBuffer_.pop_back();
+                    drawPrompt();
+                }
+                break;
+
+            default:
+                if (isprint(chn) && inputBuffer_.size() < MAX_INPUT) {
+                    inputBuffer_ += static_cast<char>(chn);
+                    drawPrompt();
+                }
+                break;
+        }
+    }
+
+    curs_set(0);
     return {};
 }
 
@@ -91,6 +145,12 @@ std::expected<void, std::string> GuiManager::run() {
                 }
                 break;
             }
+            case '/': {  // Search
+                if (auto check = handleSearch(path); !check) {
+                    return std::unexpected(check.error());
+                }
+                break;
+            }
             case 'q':  // Quit
                 running_ = false;
                 break;
@@ -141,7 +201,7 @@ void GuiManager::drawHeader() const {
 void GuiManager::drawFooter() const {
     attron(COLOR_PAIR(HEADER));
     const std::string footer{
-        "[Arrows] Navigate | [q] Quit | [r] Reload | [p] Toggle path"};
+        "[Arrows] Navigate | [q] Quit | [r] Reload | [p] Toggle path | [/] Change filter"};
     mvprintw(LINES - 2, 2, "%-*s", COLS - 4, footer.c_str());
 }
 

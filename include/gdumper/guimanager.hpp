@@ -21,6 +21,7 @@ class GuiManager {
     bool showFullPath_ = false;
 
     std::string onlyFindString_{};
+    std::string inputBuffer_{};
     std::vector<std::string> strings_;
 
     int currentLine_ = 0;
@@ -35,7 +36,8 @@ class GuiManager {
     void loadLines() const;
     void drawHeader() const;
     void drawFooter() const;
-    std::expected<void, std::string> reloadStrings(std::string path);
+    std::expected<void, std::string> handleSearch(const std::string& path);
+    std::expected<void, std::string> reloadStrings(const std::string& path);
 
     enum ColorTheme { FRAME = 1, HEADER, HIGHLIGHT, LINE_NUMBER, DEFAULT_TEXT };
 };
