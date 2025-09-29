@@ -1,4 +1,4 @@
-# MemMapExplorer ![Release](https://img.shields.io/badge/Status-Release-green)
+# MemMapExplorer ![Release](https://img.shields.io/badge/Status-Release-blue)  ![Version](https://img.shields.io/badge/Version-2.0-yellow)
 
 **MemMapExplorer** is a Linux utility for inspecting and visualizing process memory maps via the native `/proc/` interface. It provides an **interactive terminal-based interface** to explore loaded libraries, memory segments, and mappings, with filtering and navigation capabilities.
 
