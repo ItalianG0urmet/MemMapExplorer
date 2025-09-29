@@ -54,7 +54,8 @@ make
 * `↓ / j` → Scroll down  
 * `q`     → Quit the interface  
 * `r`     → Reload  
-* `p`     → Toggle paths  
+* `p`     → Toggle paths
+* `/`     → Change filter  
 
 ## Testing
 
