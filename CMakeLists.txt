@@ -13,7 +13,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # -----------
 add_library(mylib
     src/argsmanager.cpp
-    src/guimanager.cpp
+    src/gui/gui.cpp
+    src/gui/memgui.cpp
+    src/gui/managergui.cpp
     src/processmanager.cpp
     src/pidutils.cpp
 )
@@ -31,6 +33,10 @@ target_link_libraries(gdumper PRIVATE mylib)
 # -----------
 message(STATUS "Loading curses...")
 find_package(Curses REQUIRED)
+target_link_libraries(mylib PRIVATE ${CURSES_LIBRARIES})
+if(TINFO_LIB)
+    target_link_libraries(mylib PRIVATE ${TINFO_LIB})
+endif()
 if (CURSES_FOUND)
     target_include_directories(gdumper PRIVATE ${CURSES_INCLUDE_DIR})
     target_link_libraries(gdumper PRIVATE ${CURSES_LIBRARIES})
@@ -43,6 +49,22 @@ if(TINFO_LIB)
     target_link_libraries(gdumper PRIVATE ${TINFO_LIB})
 endif()
 message(STATUS "Curses enabled")
+
+# -----------
+#   Debug mode
+# -----------
+option(ENABLE_DEBUG "Enable debug mode with symbols" OFF)
+
+if(ENABLE_DEBUG)
+    message(STATUS "Debug mode enabled")
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+    add_compile_definitions(DEBUG_MODE)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -Wall -Wextra")
+    elseif(MSVC)
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi /Od /W3")
+    endif()
+endif()
 
 # -----------
 #   Test
