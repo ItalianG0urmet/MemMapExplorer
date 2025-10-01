@@ -22,8 +22,8 @@ std::expected<void, std::string> ManagerGui::run() {
         return std::unexpected("ManagerGui already running");
     }
 
-    auto renderGui = [](Gui& gui,
-                        bool& running_) -> std::expected<void, std::string> {
+    auto renderGui =
+        [this](Gui& gui, bool& running_) -> std::expected<void, std::string> {
         auto ret = gui.render();
         if (!ret) {
             return std::unexpected(ret.error());
@@ -34,7 +34,7 @@ std::expected<void, std::string> ManagerGui::run() {
                 running_ = false;
                 break;
             case Gui::NEXT_SIG:
-                // TODO: manage switch focus
+                    changeFocusGui();
                 break;
             case Gui::CONTINUE_SIG:
                 return {};
@@ -68,7 +68,7 @@ void ManagerGui::addModule(std::unique_ptr<Gui>&& gui) {
 
 int ManagerGui::guiCount() const { return static_cast<int>(guiList_.size()); }
 
-void ManagerGui::changeFocusGui(int index) {
-    focusGuiIndex_ = (guiList_.find(index) != guiList_.end()) ? index : -1;
+void ManagerGui::changeFocusGui() {
+    focusGuiIndex_ = (focusGuiIndex_ < guiCount()) ? focusGuiIndex_ + 1 : 1;
 }
 

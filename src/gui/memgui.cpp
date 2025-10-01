@@ -33,6 +33,9 @@ std::expected<Gui::ReturnSignal, std::string> MemGui::handleKeys(int ch) {
     const std::string path{"/proc/" + std::to_string(pid_) + "/maps"};
 
     switch (ch) {
+        case '\t':
+            return NEXT_SIG;
+            break;
         case 'q':
             return EXIT_SIG;
             break;

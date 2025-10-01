@@ -22,6 +22,6 @@ class ManagerGui {
     // Gui list functions
     std::unordered_map<int, std::unique_ptr<Gui>> guiList_;
     int focusGuiIndex_ = -1;
-    void changeFocusGui(int index);
+    void changeFocusGui();
     int guiCount() const;
 };
