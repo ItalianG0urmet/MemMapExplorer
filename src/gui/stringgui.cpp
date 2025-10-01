@@ -8,9 +8,6 @@
 std::expected<void, std::string> StringGui::loadProgramStrings() {
  
     // Todo: System that laad all the strings in the vector
-    for (int i = 0; i < 100; i++){
-        programStrings_.push_back("test");
-    }
 
     return {};
 }
@@ -29,6 +26,7 @@ std::expected<Gui::ReturnSignal, std::string> StringGui::handleKeys(int ch) {
             break;
         case KEY_DOWN:
         case 'j':
+            if (programStrings_.size() <= 0) break;
             currentLine_ = std::min(
                 currentLine_ + 1,
                 static_cast<int>(programStrings_.size()) - maxLine_ - 1);

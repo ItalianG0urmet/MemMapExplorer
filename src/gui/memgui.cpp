@@ -62,6 +62,7 @@ std::expected<Gui::ReturnSignal, std::string> MemGui::handleKeys(int ch) {
             break;
         case KEY_DOWN:
         case 'j':
+            if (strings_.size() <= 0) break;
             currentLine_ =
                 std::min(currentLine_ + 1,
                          static_cast<int>(strings_.size()) - maxLine_ - 1);
