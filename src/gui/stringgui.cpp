@@ -1,13 +1,16 @@
-#include "gdumper/stringgui.hpp"
+#include "gdumper/gui/stringgui.hpp"
 
 #include <expected>
 #include <string>
 
-#include "gdumper/gui.hpp"
+#include "gdumper/gui/gui.hpp"
 
 std::expected<void, std::string> StringGui::loadProgramStrings() {
  
     // Todo: System that laad all the strings in the vector
+    for (int i = 0; i < 100; i++){
+        programStrings_.push_back("test");
+    }
 
     return {};
 }

@@ -1,8 +1,8 @@
-#include "gdumper/managergui.hpp"
+#include "gdumper/gui/managergui.hpp"
 
 #include <expected>
 
-#include "gdumper/gui.hpp"
+#include "gdumper/gui/gui.hpp"
 
 std::expected<void, std::string> ManagerGui::init() {
     if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO)) {

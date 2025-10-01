@@ -1,4 +1,4 @@
-#include "gdumper/gui.hpp"
+#include "gdumper/gui/gui.hpp"
 
 #include <ncurses.h>
 #include <unistd.h>

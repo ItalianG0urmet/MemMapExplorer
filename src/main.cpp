@@ -2,10 +2,10 @@
 #include <memory>
 
 #include "gdumper/argsmanager.hpp"
-#include "gdumper/managergui.hpp"
-#include "gdumper/memgui.hpp"
+#include "gdumper/gui/managergui.hpp"
+#include "gdumper/gui/memgui.hpp"
 #include "gdumper/pidutils.hpp"
-#include "gdumper/stringgui.hpp"
+#include "gdumper/gui/stringgui.hpp"
 
 int main(int argc, char* argv[]) {
     // Get args

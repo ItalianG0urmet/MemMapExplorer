@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "gui.hpp"
+#include "gdumper/gui/gui.hpp"
 
 class StringGui : public Gui {
    public:

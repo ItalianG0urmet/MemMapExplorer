@@ -1,12 +1,13 @@
-#include "gdumper/memgui.hpp"
-#include "gdumper/gui.hpp"
+#include "gdumper/gui/memgui.hpp"
 
 #include <ncurses.h>
 #include <unistd.h>
 
 #include <expected>
-#include <gdumper/processmanager.hpp>
 #include <string>
+
+#include "gdumper/gui/gui.hpp"
+#include "gdumper/processmanager.hpp"
 
 void MemGui::reloadHeader() {
     header_ = " PID: " + std::to_string(pid_);
@@ -138,7 +139,6 @@ std::expected<void, std::string> MemGui::handleSearch(const std::string& path) {
                 break;
         }
     }
-
 
     reloadHeader();
     attron(COLOR_PAIR(FRAME));

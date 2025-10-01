@@ -4,7 +4,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "gdumper/gui.hpp"
+#include "gdumper/gui/gui.hpp"
 
 class ManagerGui {
    public:
