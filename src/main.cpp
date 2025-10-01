@@ -5,6 +5,7 @@
 #include "gdumper/managergui.hpp"
 #include "gdumper/memgui.hpp"
 #include "gdumper/pidutils.hpp"
+#include "gdumper/stringgui.hpp"
 
 int main(int argc, char* argv[]) {
     // Get args
@@ -24,6 +25,10 @@ int main(int argc, char* argv[]) {
 
     // Start gui
     ManagerGui managergui;
+
+    managergui.addModule(
+        std::make_unique<StringGui>(pidOrErr.value())
+    );
     managergui.addModule(
         std::make_unique<MemGui>(pidOrErr.value(), args.onlyFindString, args.showFullPath)
     );
