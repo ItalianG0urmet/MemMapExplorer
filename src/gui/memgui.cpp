@@ -1,15 +1,16 @@
-#include "gdumper/memgui.hpp"
-#include "gdumper/gui.hpp"
+#include "gdumper/gui/memgui.hpp"
 
 #include <ncurses.h>
 #include <unistd.h>
 
 #include <expected>
-#include <gdumper/processmanager.hpp>
 #include <string>
 
+#include "gdumper/gui/gui.hpp"
+#include "gdumper/processmanager.hpp"
+
 void MemGui::reloadHeader() {
-    header_ = " PID: " + std::to_string(pid_);
+    header_ = " Memory Maps | PID: " + std::to_string(pid_);
     if (!onlyFindString_.empty()) header_ += " | Filter: " + onlyFindString_;
 }
 
@@ -33,6 +34,9 @@ std::expected<Gui::ReturnSignal, std::string> MemGui::handleKeys(int ch) {
     const std::string path{"/proc/" + std::to_string(pid_) + "/maps"};
 
     switch (ch) {
+        case '\t':
+            return NEXT_SIG;
+            break;
         case 'q':
             return EXIT_SIG;
             break;
@@ -58,6 +62,7 @@ std::expected<Gui::ReturnSignal, std::string> MemGui::handleKeys(int ch) {
             break;
         case KEY_DOWN:
         case 'j':
+            if (strings_.size() <= 0) break;
             currentLine_ =
                 std::min(currentLine_ + 1,
                          static_cast<int>(strings_.size()) - maxLine_ - 1);
@@ -135,7 +140,6 @@ std::expected<void, std::string> MemGui::handleSearch(const std::string& path) {
                 break;
         }
     }
-
 
     reloadHeader();
     attron(COLOR_PAIR(FRAME));

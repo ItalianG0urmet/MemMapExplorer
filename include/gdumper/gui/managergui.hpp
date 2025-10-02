@@ -4,7 +4,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "gdumper/gui.hpp"
+#include "gdumper/gui/gui.hpp"
 
 class ManagerGui {
    public:
@@ -22,6 +22,6 @@ class ManagerGui {
     // Gui list functions
     std::unordered_map<int, std::unique_ptr<Gui>> guiList_;
     int focusGuiIndex_ = -1;
-    void changeFocusGui(int index);
+    void changeFocusGui();
     int guiCount() const;
 };

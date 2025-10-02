@@ -16,6 +16,7 @@ add_library(mylib
     src/gui/gui.cpp
     src/gui/memgui.cpp
     src/gui/managergui.cpp
+    src/gui/stringgui.cpp
     src/processmanager.cpp
     src/pidutils.cpp
 )

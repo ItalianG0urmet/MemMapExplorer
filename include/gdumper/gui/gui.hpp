@@ -16,6 +16,9 @@ struct NcursesGuard {
         curs_set(0);
     }
     ~NcursesGuard() { endwin(); }
+
+    NcursesGuard(const NcursesGuard&) = delete;
+    NcursesGuard operator=(const NcursesGuard&) = delete;
 };
 
 class Gui {

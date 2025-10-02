@@ -21,5 +21,5 @@ std::expected<pid_t, std::string> validatePid(pid_t pid) noexcept {
     return pid;
 }
 
-}  // namespace pid_utils
+}  // namespace pidUtils
 

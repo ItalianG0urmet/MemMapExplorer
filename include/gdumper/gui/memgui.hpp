@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "gdumper/gui.hpp"
+#include "gdumper/gui/gui.hpp"
 
 class MemGui : public Gui {
    public:
