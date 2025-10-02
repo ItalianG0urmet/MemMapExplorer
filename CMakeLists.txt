@@ -2,7 +2,7 @@
 #   Define
 # -----------
 cmake_minimum_required(VERSION 3.28)
-project(gdumper LANGUAGES CXX)
+project(dumper LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -26,8 +26,8 @@ target_include_directories(mylib PUBLIC
     ${CMAKE_SOURCE_DIR}/include
 )
 
-add_executable(gdumper src/main.cpp)
-target_link_libraries(gdumper PRIVATE mylib)
+add_executable(dumper src/main.cpp)
+target_link_libraries(dumper PRIVATE mylib)
 
 # -----------
 #   Curses
@@ -39,15 +39,15 @@ if(TINFO_LIB)
     target_link_libraries(mylib PRIVATE ${TINFO_LIB})
 endif()
 if (CURSES_FOUND)
-    target_include_directories(gdumper PRIVATE ${CURSES_INCLUDE_DIR})
-    target_link_libraries(gdumper PRIVATE ${CURSES_LIBRARIES})
+    target_include_directories(dumper PRIVATE ${CURSES_INCLUDE_DIR})
+    target_link_libraries(dumper PRIVATE ${CURSES_LIBRARIES})
 else()
     message(FATAL_ERROR "Curses not found")
 endif()
 
 find_library(TINFO_LIB tinfo)
 if(TINFO_LIB)
-    target_link_libraries(gdumper PRIVATE ${TINFO_LIB})
+    target_link_libraries(dumper PRIVATE ${TINFO_LIB})
 endif()
 message(STATUS "Curses enabled")
 
