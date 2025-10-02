@@ -10,7 +10,7 @@
 #include "gdumper/processmanager.hpp"
 
 void MemGui::reloadHeader() {
-    header_ = " PID: " + std::to_string(pid_);
+    header_ = " Memory Maps | PID: " + std::to_string(pid_);
     if (!onlyFindString_.empty()) header_ += " | Filter: " + onlyFindString_;
 }
 

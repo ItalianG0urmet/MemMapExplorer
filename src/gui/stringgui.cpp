@@ -37,7 +37,7 @@ std::expected<Gui::ReturnSignal, std::string> StringGui::handleKeys(int ch) {
 
 std::expected<void, std::string> StringGui::onRun() {
     footer_ = "[Arrows] Navigate | [q] Quit";
-    header_ = " PID: " + std::to_string(pid_);
+    header_ = " Strings | PID: " + std::to_string(pid_);
     exePath_ = "/proc/" + std::to_string(pid_) + "/exe";
 
     if (const auto check = loadProgramStrings(); !check) {
