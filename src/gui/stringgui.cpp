@@ -32,7 +32,7 @@ std::expected<Gui::ReturnSignal, std::string> StringGui::handleKeys(int ch) {
                 static_cast<int>(programStrings_.size()) - maxLine_ - 1);
             break;
     }
-    return {};
+    return CONTINUE_SIG;
 }
 
 std::expected<void, std::string> StringGui::onRun() {
