@@ -1,13 +1,42 @@
 #include "gdumper/gui/stringgui.hpp"
 
 #include <expected>
+#include <fstream>
+#include <iterator>
 #include <string>
+#include <vector>
 
 #include "gdumper/gui/gui.hpp"
 
 std::expected<void, std::string> StringGui::loadProgramStrings() {
- 
-    // Todo: System that laad all the strings in the vector
+
+    std::ifstream file(exePath_, std::ios::binary);
+    if (!file) {
+        return std::unexpected("Can't read the file strings");
+    }
+
+    std::vector<unsigned char> buffer((std::istreambuf_iterator<char>(file)),
+                                      std::istreambuf_iterator<char>());
+
+    std::string temp;
+    std::vector<std::string> strings;
+
+    for (unsigned char c : buffer) {
+        if (isprint(c) || c == ' ' || c == '\t') {
+            temp.push_back(c);
+        } else {
+            if (temp.size() >= 4) {
+                strings.push_back(temp);
+            }
+            temp.clear();
+        }
+    }
+
+    if (temp.size() >= 4) {
+        strings.push_back(temp);
+    }
+
+    programStrings_ = strings;
 
     return {};
 }
