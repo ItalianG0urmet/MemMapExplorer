@@ -8,7 +8,10 @@
 
 class StringGui : public Gui {
    public:
-    StringGui(pid_t pid) : currentLine_(0), maxLine_(0), pid_(pid) {}
+     StringGui(pid_t pid) : currentLine_(0), maxLine_(0), pid_(pid) {}
+
+     StringGui(const StringGui &) = delete;
+     StringGui &operator=(const StringGui &) = delete;
 
    private:
     // Override null
@@ -31,4 +34,7 @@ class StringGui : public Gui {
     std::vector<std::string> programStrings_;
     std::string exePath_{};
     pid_t pid_ = 0;
+
+    // Default settings
+    inline static constexpr int MIN_STRING_LENGTH = 4;
 };

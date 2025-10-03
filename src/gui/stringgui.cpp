@@ -25,14 +25,14 @@ std::expected<void, std::string> StringGui::loadProgramStrings() {
         if (isprint(c) || c == ' ' || c == '\t') {
             temp.push_back(c);
         } else {
-            if (temp.size() >= 4) {
+            if (temp.size() >= MIN_STRING_LENGTH) {
                 strings.push_back(temp);
             }
             temp.clear();
         }
     }
 
-    if (temp.size() >= 4) {
+    if (temp.size() >= MIN_STRING_LENGTH) {
         strings.push_back(temp);
     }
 
