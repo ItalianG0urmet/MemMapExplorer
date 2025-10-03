@@ -9,7 +9,6 @@
 #include "gdumper/gui/gui.hpp"
 
 std::expected<void, std::string> StringGui::loadProgramStrings() {
-
     std::ifstream file(exePath_, std::ios::binary);
     if (!file) {
         return std::unexpected("Can't read the file strings");
@@ -26,7 +25,10 @@ std::expected<void, std::string> StringGui::loadProgramStrings() {
             temp.push_back(c);
         } else {
             if (temp.size() >= MIN_STRING_LENGTH) {
-                strings.push_back(temp);
+                if (std::find(strings.begin(), strings.end(), temp) ==
+                    strings.end()) {
+                    strings.push_back(temp);
+                }
             }
             temp.clear();
         }
@@ -36,7 +38,7 @@ std::expected<void, std::string> StringGui::loadProgramStrings() {
         strings.push_back(temp);
     }
 
-    programStrings_ = strings;
+    programStrings_ = std::move(strings);
 
     return {};
 }
